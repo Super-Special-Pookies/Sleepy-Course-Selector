@@ -5,10 +5,12 @@ from bs4 import BeautifulSoup
 import json
 from PIL import Image
 from time import sleep
+import execjs
 """
     README:
-    python xk.py --xh MG20330064 --pw 34D2C0A9BDCE3EAD13E80D55CAE0C457574C9DECDA63AD2C --st 0.1
+    python xk.py --xh MG20330064 --pw 12345678 --st 0.1
 """
+
 
 bjdms = {
     "20201-033-081200D02-1592649131637" : "分布式算法入门",
@@ -20,6 +22,14 @@ bjdms = {
     "20201-033-085401D08-1592649131115" : "MapReduce海量数据并行处理（MapReduce海量数据并行处理）",
     "20201-033-081200D19-1590054822275" : "并发算法与理论（并发算法与理论）" 
 }
+
+def get_DESPW(pw):
+    js_code = ""
+    with open("DES.js", "r") as f:
+        js_code = "".join(f.readlines())
+    DES = execjs.compile(js_code)
+    return DES.call("strEncSimple", pw)
+
 
 def get_time_c():
     time_c = int(time.time()*1000)
@@ -61,7 +71,7 @@ def main(args):
             if tmp["code"] == "1":
                 break
             else:
-                print("验证码错误")
+                print("验证码错误或密码错误")
         except Exception:
             print("访问次数过多,5min后再尝试")
             exit()
@@ -110,8 +120,9 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--xh', type=str, default="MG20330064", help='学号')
-    parser.add_argument('--pw', type=str, default="34D2C0A9BDCE3EAD13E80D55CAE0C457574C9DECDA63AD2C", help='加密后48位的密码')
+    parser.add_argument('--pw', type=str, default="12345678", help='密码')
     parser.add_argument('--st', type=float, default=1, help='sleep time')
     args = parser.parse_args()
+    args.pw = get_DESPW(args.pw)
     print("args:", args)
     main(args)

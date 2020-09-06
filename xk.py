@@ -13,7 +13,8 @@ import execjs
 
 
 bjdms = {
-    "20201-033-081200D02-1592649131637" : "分布式算法入门",
+    # "20201-033-081200D02-1592649131637" : "分布式算法入门",
+    "20201-033-081200D15-1590054822235": "矩阵论及其应用（矩阵论及其应用）",
     "20201-033-085401C02-1592649131522" : "信息技术前沿及行业应用",
     "20201-033-085401C01-1592649131579" : "分布式计算研究导引",
     "20201-4330-10284A001-1590476519355": "硕士生英语（硕士英语听力02）",
@@ -38,8 +39,8 @@ def get_time_c():
 
 def get_yzm(cookies):
     res = requests.get("http://yjsxk.nju.edu.cn/yjsxkapp/sys/xsxkapp/login/4/vcode.do?timestamp="+str(get_time_c()), cookies=cookies)
-    tmp_soup = BeautifulSoup(res.content)
-    t = json.loads(tmp_soup.html.body.p.text)
+    tmp_soup = BeautifulSoup(res.text)
+    t = json.loads(tmp_soup.text)
     vtoken = t['data']['token']
     res = requests.get("http://yjsxk.nju.edu.cn/yjsxkapp/sys/xsxkapp/login/vcode/image.do?vtoken="+str(vtoken), cookies=cookies)
 
@@ -76,9 +77,14 @@ def main(args):
             print("访问次数过多,5min后再尝试")
             exit()
 
-    res = requests.get('http://yjsxk.nju.edu.cn/yjsxkapp/sys/xsxkapp/xsxkHome/loadPublicInfo_course.do', cookies=cookies)
-    tmp = json.loads(res.text)
-    csrfToken = tmp['csrfToken']
+    while True:
+        try:
+            res = requests.get('http://yjsxk.nju.edu.cn/yjsxkapp/sys/xsxkapp/xsxkHome/loadPublicInfo_course.do', cookies=cookies)
+            tmp = json.loads(res.text)
+            csrfToken = tmp['csrfToken']
+            break
+        except Exception:
+            print("选课还未开始" * 100)
 
     data = {
         'csrfToken': csrfToken,
@@ -115,13 +121,14 @@ def main(args):
         print("未选择的课程有", bjdms)
         if len(bjdms) == 0:
             break
+        print("如果出现页面已过期说明爬虫脚本没用了!!!")
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--xh', type=str, default="MG20330064", help='学号')
-    parser.add_argument('--pw', type=str, default="12345678", help='密码')
-    parser.add_argument('--st', type=float, default=1, help='sleep time')
+    parser.add_argument('--pw', type=str, default="Allfamily?6", help='密码')
+    parser.add_argument('--st', type=float, default=0.01, help='sleep time')
     args = parser.parse_args()
     args.pw = get_DESPW(args.pw)
     print("args:", args)

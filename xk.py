@@ -103,7 +103,7 @@ def main(args):
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36",
         "X-Requested-With": "XMLHttpRequest",
     }
-    input("回车键开始抢课")
+    # input("回车键开始抢课")
     while True:
         for bjdm in bjdms.keys():
             data["bjdm"] = bjdm
@@ -113,7 +113,7 @@ def main(args):
                 tmp = json.loads(res.text)
                 print(res.text)
                 print(bjdms[bjdm], tmp["msg"])
-                if tmp["code"] == "1":
+                if str(tmp["code"]) == "1":
                     bjdms.pop(bjdm)
             except Exception:
                 pass

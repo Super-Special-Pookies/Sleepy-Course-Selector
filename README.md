@@ -1,13 +1,15 @@
 # Sleepy-Course-Selector
 
-I need sleep, so a scrapy helps me select course.
+If you need sleep, so a scrapy helps you select course. 
+
+**Note: This project is for reference only learn.**
 
 
 
 ## How-to use
 
 ```shell
-python3 xk.py --xh MG20330064 --pw 12345678 --st 0.1
+python3 xk.py --xh MG20330000 --pw 12345678 --st 0.1
 ```
 
 

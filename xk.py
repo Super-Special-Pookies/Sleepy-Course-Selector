@@ -126,8 +126,8 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--xh', type=str, default="MG20330064", help='学号')
-    parser.add_argument('--pw', type=str, default="Allfamily?6", help='密码')
+    parser.add_argument('--xh', type=str, default="MG20330000", help='学号')
+    parser.add_argument('--pw', type=str, default="onmygod!", help='密码')
     parser.add_argument('--st', type=float, default=0.01, help='sleep time')
     args = parser.parse_args()
     args.pw = get_DESPW(args.pw)

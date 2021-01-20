@@ -49,11 +49,24 @@ def get_yzm(cookies):
     return vtoken
 
 def main(args):
+    header = {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Language": 'zh-CN,zh;q=0.9',
+        "Connection": "keep-alive",
+        "Content-Length": "138",
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "Host": "yjsxk.nju.edu.cn",
+        "Origin": "https://yjsxk.nju.edu.cn",
+        "Referer": "https://yjsxk.nju.edu.cn/yjsxkapp/sys/xsxkapp/index_nju.html",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.81 Safari/537.36 SE 2.X MetaSr 1.0",
+        "X-Requested-With": "XMLHttpRequest",
+    }
 
-    response  = requests.get("http://yjsxk.nju.edu.cn/yjsxkapp/sys/xsxkapp/index_nju.html")
+    response = requests.get("https://yjsxk.nju.edu.cn/yjsxkapp/sys/xsxkapp/index_nju.html")
     cookies = response.cookies
 
-    while True: # 输入验证码直到正确
+    while True:   # 输入验证码直到正确
         vtoken = get_yzm(cookies)
         img=Image.open('t.jpeg')
         img.show()
@@ -64,51 +77,43 @@ def main(args):
             'verifyCode': yzm,
             'vtoken': vtoken
         }
-        res = requests.post('http://yjsxk.nju.edu.cn/yjsxkapp/sys/xsxkapp/login/check/login.do?timestrap='+str(get_time_c()), data, cookies=cookies)
+        res = requests.post('https://yjsxk.nju.edu.cn/yjsxkapp/sys/xsxkapp/login/check/login.do?timestrap='+str(get_time_c()), data=data, headers=header, cookies=cookies)
         cookies = res.cookies
         try:
             tmp = json.loads(res.text)
             print(tmp["code"])
             if tmp["code"] == "1":
                 break
+            elif tmp["code"] == "2":
+                print("密码错误！")
             else:
-                print("验证码错误或密码错误")
+                print("验证码错误！")
         except Exception:
             print("访问次数过多,5min后再尝试")
             exit()
 
     while True:
         try:
-            res = requests.get('http://yjsxk.nju.edu.cn/yjsxkapp/sys/xsxkapp/xsxkHome/loadPublicInfo_course.do', cookies=cookies)
+            res = requests.get('https://yjsxk.nju.edu.cn/yjsxkapp/sys/xsxkapp/xsxkHome/loadPublicInfo_course.do', cookies=cookies)
             tmp = json.loads(res.text)
+            print(tmp)
             csrfToken = tmp['csrfToken']
             break
         except Exception:
-            print("选课还未开始" * 100)
+            print("---------------------------选课还未开始------------------------------")
 
     data = {
         'csrfToken': csrfToken,
         'lx': 2,
     }
 
-    header = {
-        "Accept": "application/json, text/javascript, */*; q=0.01",
-        "Accept-Encoding": "gzip, deflate",
-        "Accept-Language": 'zh-CN,zh;q=0.9,en;q=0.8',
-        "Connection": "keep-alive",
-        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-        "Host": "yjsxk.nju.edu.cn",
-        "Origin": "http://yjsxk.nju.edu.cn",
-        "Referer": "http://yjsxk.nju.edu.cn/yjsxkapp/sys/xsxkapp/course_nju.html",
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36",
-        "X-Requested-With": "XMLHttpRequest",
-    }
+
     # input("回车键开始抢课")
     while True:
         for bjdm in bjdms.keys():
             data["bjdm"] = bjdm
             print(data)
-            res = requests.post("http://yjsxk.nju.edu.cn/yjsxkapp/sys/xsxkapp/xsxkCourse/choiceCourse.do?_="+str(get_time_c()), headers=header, data=data, cookies=cookies)
+            res = requests.post("https://yjsxk.nju.edu.cn/yjsxkapp/sys/xsxkapp/xsxkCourse/choiceCourse.do?_="+str(get_time_c()), headers=header, data=data, cookies=cookies)
             try:
                 tmp = json.loads(res.text)
                 print(res.text)

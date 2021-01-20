@@ -8,7 +8,7 @@ from time import sleep
 import execjs
 """
     README:
-    python xk.py --xh MG20330064 --pw 12345678 --st 0.1
+    python xk.py --xh MG20330000 --pw 12345678 --st 0.1
 """
 
 
@@ -108,7 +108,7 @@ def main(args):
     }
 
 
-    # input("回车键开始抢课")
+    input("回车键开始抢课")
     while True:
         for bjdm in bjdms.keys():
             data["bjdm"] = bjdm
